@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Mental Health chatbot</title>
+    <style>
+        body {
+            background-image: url("https://www.paulcecchettimusic.com/wp-content/uploads/2019/03/Background-opera-speeddials-community-web-simple-backgrounds.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chat-container {
+            width: 700px;
+            display: flex;
+            border-radius: 10px;
+            flex-direction: column;
+            height: 80vh;
+            overflow: hidden;
+        }
+        
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .bot-message p, .user-message p {
+            margin: 0;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            
+        }
+
+        .bot-message p {
+            background-color: #fffefe;
+            color: #2d92ff;
+            text-align: left;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+            
+        }
+
+        .user-message p {
+            background-color: #fbfbfb;
+            color: #000000;
+            text-align: right;
+        }
+
+        .input-section {
+            width: 100%; /* Extend to full width of the chat container */
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            background-color: #ffffff;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .input-section button, .input-section .voice-btn {
+            border: none;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .input-title {
+            position: absolute;
+            top: 75%;  /* Positions the title in the center vertically */
+            left: 50%; /* Positions the title in the center horizontally */
+            transform: translate(-50%, -50%); /* Offsets the element back to truly center it */
+            width: 100%; /* Ensures the title can span the width of its container */
+        }
+        
+        .input-title-text {
+            font-size: 30px; /* Adjust the font size */
+            font-weight: bold; /* Make the title bold */
+            text-align: center; /* Ensure the text is centered */
+            color: #333; /* Change the text color if needed */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header"></div>
+        <div class="chat-box" id="chat-box"></div>
+
+         <!-- Title above the input field -->
+    <div class="input-title">
+        <p style="text-align: center; "><b>ENHANCED HEALTHCARE CHATBOT</b></p>
+    </div>
+
+        <div class="input-section">
+            <input type="text" id="user-message" placeholder="Type your message here">
+            <button onclick="sendMessage()">Send</button>
+            <button class="voice-btn" onclick="startRecognition()">🎤</button>
+        </div>
+    </div>
+
+    <script>
+        // Voice recognition setup
+        function startRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("user-message").value = transcript;
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Error occurred in recognition:", event.error);
+            };
+        }
+
+        async function sendMessage() {
+            const userMessage = document.getElementById("user-message").value;
+            if (userMessage.trim() === "") return; // Ignore empty messages
+            document.getElementById("chat-box").innerHTML += `<div class="message user-message"><p>${userMessage}</p></div>`;
+            const response = await fetch('/get_response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userMessage })
+            });
+            const data = await response.json();
+            document.getElementById("chat-box").innerHTML += `<div class="message bot-message"><p>${data.response}</p></div>`;
+            document.getElementById("user-message").value = '';
+            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
+        }
+
+        // Send message on pressing "Enter" key
+        document.getElementById("user-message").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent the default action (like newline insertion)
+                sendMessage(); // Call sendMessage function
+            }
+        });
+    </script>
+</body>
+</html>

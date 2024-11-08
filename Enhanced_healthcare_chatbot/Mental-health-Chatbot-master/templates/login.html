@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        /* Resetting default styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-image: url("https://particle.scitech.org.au/wp-content/uploads/2020/06/west-end-rotto-dec-2019-scaled.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            height: 100vh; display: flex; align-items: center;
+            justify-content: center; overflow: hidden;
+            animation: backgroundAnimation 10s infinite;
+        }
+        .login-container {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%; max-width: 400px; padding: 40px 30px; text-align: center;
+        }
+        .login-container h1 {
+            font-size: 2.5rem; color: #ffffff; margin-bottom: 20px; font-weight: bold;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 1rem; margin-bottom: 5px; color: #333;
+        }
+        .form-group input {
+            width: 100%; padding: 12px; font-size: 1rem; border: 1px solid #ddd;
+            border-radius: 5px; transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none; border-color: #6a11cb;
+            box-shadow: 0 0 8px rgba(106, 17, 203, 0.5);
+        }
+        .submit-btn {
+            width: 100%; padding: 14px; background: #feb47b; color: white;
+            border: none; font-size: 1.2rem; border-radius: 5px; cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover { background: #ff7e5f; }
+        .forgot-password { margin-top: 10px; font-size: 0.9rem; text-align: left; }
+        .forgot-password a { color: #000000; text-decoration: none; }
+        .signup-link { margin-top: 20px; font-size: 1rem; color: #000000; }
+        .signup-link a { color: #000000; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1><b>Log in</b></h1>
+        
+        {% if error %}
+        <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email"><strong>Email:</strong></label>
+                <input type="email" name="email" id="email" required placeholder="Enter your email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password"><strong>Password:</strong></label>
+                <input type="password" name="password" id="password" required placeholder="Enter your password">
+            </div>
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+        
+        <div class="forgot-password">
+            <a href="#">Forgot your password?</a>
+        </div>
+        <div class="signup-link">
+            Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>
+        </div>
+    </div>
+</body>
+</html>
